@@ -47,42 +47,42 @@ cd backend
 ```
 Install the dependencies:
 
-'''bash
+```bash
 npm install
-'''
+```
 Create a .env file in the root of the backend folder and add your environment variables:
 
-'''bash
+```bash
 PORT=5000
 MONGO_URI=your_mongodb_connection_string_here
 JWT_SECRET=your_secret_key_here
-'''
+```
 
 Start the backend development server:
 
-'''bash
+```bash
 npm run dev
-'''
+```
 
 ### 2. Frontend Setup
 
 Open a second terminal and navigate to the frontend directory:
 
-'''bash
+```bash
 cd frontend
-'''
+```
 
 Install the dependencies:
 
-'''bash
+```bash
 npm install
-'''
+```
 
 Start the frontend development server:
 
-'''bash
+```bash
 npm run dev
-'''
+```
 
 ## 📂 Folder Structure Overview
 
