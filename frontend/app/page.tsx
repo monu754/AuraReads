@@ -9,7 +9,8 @@ interface Book {
   title: string;
   author: string;
   coverColor: string;
-  avgRating?: number; // The new property from our backend!
+  coverImage?: string; // We added the image property here!
+  avgRating?: number; 
 }
 
 export default function Home() {
@@ -19,7 +20,6 @@ export default function Home() {
   useEffect(() => {
     const fetchTrendingBooks = async () => {
       try {
-        // Fetch from the new Trending route!
         const res = await api.get("/books/trending");
         setBooks(res.data);
       } catch (err) {
@@ -71,17 +71,29 @@ export default function Home() {
             {books.map((book) => (
               <Link href={`/book/${book._id}`} key={book._id} className="group">
                 <div className="flex flex-col h-full transition-all duration-500 group-hover:-translate-y-3">
-                  <div className={`relative w-full aspect-[2/3] rounded-xl mb-5 bg-gradient-to-br ${book.coverColor || 'from-slate-700 to-slate-800'} flex items-center justify-center p-4 border border-white/10 shadow-xl group-hover:shadow-2xl transition-all`}>
+                  <div className={`relative w-full aspect-[2/3] rounded-xl mb-5 bg-gradient-to-br ${book.coverColor || 'from-slate-700 to-slate-800'} overflow-hidden flex items-center justify-center border border-white/10 shadow-xl group-hover:shadow-2xl transition-all`}>
                     
-                    {/* The new Star Rating Badge! */}
-                    <div className="absolute top-3 right-3 bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10 flex items-center gap-1.5 shadow-lg">
+                    {/* The new Cover Image Logic! */}
+                    {book.coverImage ? (
+                      <img 
+                        src={book.coverImage} 
+                        alt={book.title} 
+                        className="absolute inset-0 w-full h-full object-cover" 
+                      />
+                    ) : (
+                      <span className="font-serif font-bold text-white text-center drop-shadow-lg p-4 z-0">
+                        {book.title}
+                      </span>
+                    )}
+
+                    {/* The Star Rating Badge (z-10 keeps it above the image) */}
+                    <div className="absolute top-3 right-3 z-10 bg-slate-950/80 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10 flex items-center gap-1.5 shadow-lg">
                       <span className="text-amber-400 text-xs drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]">★</span>
                       <span className="text-white text-xs font-black">
                         {book.avgRating && book.avgRating > 0 ? book.avgRating.toFixed(1) : 'New'}
                       </span>
                     </div>
 
-                    <span className="font-serif font-bold text-white text-center drop-shadow-lg">{book.title}</span>
                   </div>
                   <h3 className="text-base font-bold text-slate-200 group-hover:text-amber-400 transition-colors truncate">{book.title}</h3>
                   <p className="text-sm text-slate-500 truncate">{book.author}</p>

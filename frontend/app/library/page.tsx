@@ -9,6 +9,7 @@ interface Book {
   title: string;
   author: string;
   coverColor: string;
+  coverImage?: string; // NEW
 }
 
 export default function LibraryPage() {
@@ -19,7 +20,7 @@ export default function LibraryPage() {
     const fetchBooks = async () => {
       try {
         const res = await api.get("/books");
-        setBooks(res.data); // Fetch ALL books
+        setBooks(res.data);
       } catch (err) {
         console.error("Failed to fetch books", err);
       } finally {
@@ -43,8 +44,21 @@ export default function LibraryPage() {
           {books.map((book) => (
             <Link href={`/book/${book._id}`} key={book._id} className="group">
               <div className="flex flex-col h-full transition-all duration-500 group-hover:-translate-y-2">
-                <div className={`relative w-full aspect-[2/3] rounded-xl mb-4 bg-gradient-to-br ${book.coverColor || 'from-slate-700 to-slate-800'} flex items-center justify-center p-4 border border-white/10 shadow-lg group-hover:shadow-2xl transition-all`}>
-                  <span className="font-serif font-bold text-white text-center drop-shadow-lg text-sm">{book.title}</span>
+                <div className={`relative w-full aspect-[2/3] rounded-xl mb-4 bg-gradient-to-br ${book.coverColor || 'from-slate-700 to-slate-800'} overflow-hidden border border-white/10 shadow-lg group-hover:shadow-2xl transition-all`}>
+                  
+                  {/* NEW: IMAGE LOGIC */}
+                  {book.coverImage ? (
+                    <img 
+                      src={book.coverImage} 
+                      alt={book.title} 
+                      className="w-full h-full object-cover" 
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full p-4">
+                      <span className="font-serif font-bold text-white text-center drop-shadow-lg text-sm">{book.title}</span>
+                    </div>
+                  )}
+
                 </div>
                 <h3 className="text-sm font-bold text-slate-200 group-hover:text-amber-400 transition-colors truncate">{book.title}</h3>
                 <p className="text-xs text-slate-500 truncate">{book.author}</p>
