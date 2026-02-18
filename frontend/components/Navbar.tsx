@@ -1,0 +1,135 @@
+"use client";
+
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import { useEffect, useState, useRef } from 'react';
+
+interface User {
+  name: string;
+  email?: string;
+  role: string;
+}
+
+export default function Navbar() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [user, setUser] = useState<User | null>(null);
+  
+  // New state for dropdown
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const checkUser = () => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        setUser(null);
+      }
+    } else {
+      setUser(null);
+    }
+  };
+
+  useEffect(() => {
+    checkUser();
+    setIsDropdownOpen(false); // Close dropdown when navigating to a new page
+  }, [pathname]);
+
+  // Listen for clicks outside the dropdown to close it
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    setIsDropdownOpen(false);
+    router.push("/login");
+  };
+
+  return (
+    <nav className="sticky top-0 z-50 bg-slate-950/60 backdrop-blur-xl border-b border-white/5 shadow-2xl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20">
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-lg">
+              <span className="text-slate-950 font-black text-xl">A</span>
+            </div>
+            <span className="text-2xl font-extrabold tracking-tight text-white">
+              Aura<span className="text-amber-400">Reads</span>
+            </span>
+          </Link>
+
+          <div className="flex items-center gap-6">
+            <Link href="/library" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
+              Library
+            </Link>
+            
+            {user ? (
+              <div className="flex items-center gap-6">
+                {user.role === 'Admin' && (
+                  <Link href="/admin" className="text-sm font-bold text-amber-500 hover:text-amber-400 transition-colors">
+                    Admin Console
+                  </Link>
+                )}
+                
+                {/* ---------- USER PROFILE DROPDOWN ---------- */}
+                <div className="relative" ref={dropdownRef}>
+                  <button 
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center gap-2 text-sm font-medium text-slate-300 hover:text-white transition-colors focus:outline-none"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 font-bold shadow-inner">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <span>Hi, {user.name}</span>
+                    <span className="text-xs text-slate-500 ml-1">▼</span>
+                  </button>
+
+                  {/* Dropdown Menu Box */}
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-3 w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="px-4 py-3 border-b border-slate-800 bg-slate-950/50">
+                        <p className="text-sm font-bold text-white">{user.name}</p>
+                        <p className="text-xs text-slate-400 truncate">{user.email || 'User Account'}</p>
+                      </div>
+                      <div className="p-2">
+                        <Link 
+                          href="/profile" 
+                          className="block px-4 py-2.5 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white rounded-lg transition-colors"
+                        >
+                          My Profile
+                        </Link>
+                        <button 
+                          onClick={handleLogout}
+                          className="w-full text-left px-4 py-2.5 text-sm font-bold text-rose-400 hover:bg-rose-500/10 hover:text-rose-300 rounded-lg transition-colors mt-1"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {/* ------------------------------------------- */}
+
+              </div>
+            ) : (
+              <Link href="/login" className="bg-amber-500 text-slate-950 px-5 py-2 rounded-lg font-bold hover:bg-amber-400 transition-all">
+                Login
+              </Link>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
