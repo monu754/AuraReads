@@ -5,14 +5,21 @@ import mongoose from 'mongoose';
 
 // Import our routes
 import authRoutes from './routes/authRoutes.js';
-import bookRoutes from './routes/bookRoutes.js';       // <-- NEW
-import reviewRoutes from './routes/reviewRoutes.js';   // <-- NEW
+import bookRoutes from './routes/bookRoutes.js';       
+import reviewRoutes from './routes/reviewRoutes.js';   
 
 dotenv.config();
 
 const app = express();
 
-app.use(cors()); 
+// --- UPDATED EXPLICIT CORS POLICY ---
+app.use(cors({
+  origin: [
+    'http://localhost:3000', 
+    'https://aurareads.vercel.app' // Your live Vercel URL
+  ],
+  credentials: true // Crucial for authentication headers
+})); 
 app.use(express.json()); 
 
 app.get('/', (req, res) => {
@@ -21,18 +28,18 @@ app.get('/', (req, res) => {
 
 // Use the Routes!
 app.use('/api/auth', authRoutes);
-app.use('/api/books', bookRoutes);       // <-- NEW
-app.use('/api/reviews', reviewRoutes);   // <-- NEW
+app.use('/api/books', bookRoutes);       
+app.use('/api/reviews', reviewRoutes);   
 
 // Server Setup
 const PORT = process.env.PORT || 5000;
+
 // Connect to MongoDB Database
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('🟢 Successfully connected to MongoDB Database!');
-    // Only start the server if the database connects successfully
     app.listen(PORT, () => {
-      console.log(`🚀 Server is running on http://localhost:${PORT}`);
+      console.log(`🚀 Server is running on port ${PORT}`);
     });
   })
   .catch((error) => {
