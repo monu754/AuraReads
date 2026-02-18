@@ -12,18 +12,22 @@ dotenv.config();
 
 const app = express();
 
-// --- UPDATED EXPLICIT CORS POLICY ---
 app.use(cors({
   origin: [
     'http://localhost:3000', 
     'https://aurareads.vercel.app' // Your live Vercel URL
   ],
-  credentials: true // Crucial for authentication headers
+  credentials: true 
 })); 
 app.use(express.json()); 
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the AuraReads API!' });
+});
+
+// --- NEW TINY ROUTE FOR CRON-JOB.ORG ---
+app.get('/ping', (req, res) => {
+  res.status(200).send('OK'); // Sends a microscopic 2-byte response
 });
 
 // Use the Routes!
