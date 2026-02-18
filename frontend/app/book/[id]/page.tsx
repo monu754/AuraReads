@@ -13,6 +13,7 @@ interface Book {
   description: string;
   genre: string;
   coverColor: string;
+  coverImage?: string; // <-- Added the image property here!
 }
 
 interface Review {
@@ -24,7 +25,7 @@ interface Review {
 }
 
 export default function BookDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params); // Unwrap the ID from the URL
+  const { id } = use(params);
   const [book, setBook] = useState<Book | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +33,6 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
   useEffect(() => {
     const fetchBookData = async () => {
       try {
-        // Fetch both the Book details AND the Approved Reviews simultaneously
         const [bookRes, reviewsRes] = await Promise.all([
           api.get(`/books/${id}`),
           api.get(`/reviews/book/${id}`)
@@ -53,7 +53,6 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
   if (loading) return <div className="text-center py-32 text-slate-400 text-2xl font-black tracking-widest animate-pulse">LOADING ARCHIVES...</div>;
   if (!book) return <div className="text-center py-32 text-white text-2xl">Book not found.</div>;
 
-  // Calculate Average Rating dynamically
   const avgRating = reviews.length > 0 
     ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1) 
     : "0.0";
@@ -69,11 +68,22 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
         <div className="w-full lg:w-1/3">
           <div className="sticky top-28">
             <div className="relative w-full aspect-[2/3] rounded-2xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.5)] mb-8">
-              <div className={`absolute inset-0 bg-gradient-to-br ${book.coverColor} rounded-2xl flex items-center justify-center border border-white/10 z-10`}>
-                <span className="font-serif font-black text-white text-4xl tracking-widest text-center px-6 drop-shadow-2xl">
-                  {book.title}
-                </span>
+              
+              <div className={`absolute inset-0 bg-gradient-to-br ${book.coverColor || 'from-slate-700 to-slate-800'} rounded-2xl flex items-center justify-center border border-white/10 z-10 overflow-hidden`}>
+                {/* --- NEW IMAGE LOGIC --- */}
+                {book.coverImage ? (
+                  <img 
+                    src={book.coverImage} 
+                    alt={book.title} 
+                    className="absolute inset-0 w-full h-full object-cover" 
+                  />
+                ) : (
+                  <span className="font-serif font-black text-white text-4xl tracking-widest text-center px-6 drop-shadow-2xl z-10">
+                    {book.title}
+                  </span>
+                )}
               </div>
+              
               <div className="absolute top-2 bottom-2 -right-3 w-6 bg-slate-300 rounded-r-xl -z-10 shadow-inner"></div>
             </div>
             
@@ -114,8 +124,6 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
           <div>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-6">
               <h2 className="text-3xl font-bold text-white tracking-tight">Community Voices</h2>
-              
-              {/* Pass the real book ID to our review form */}
               <ReviewForm bookId={book._id} />
             </div>
 

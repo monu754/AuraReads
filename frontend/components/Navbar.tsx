@@ -15,7 +15,6 @@ export default function Navbar() {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   
-  // New state for dropdown
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -34,10 +33,9 @@ export default function Navbar() {
 
   useEffect(() => {
     checkUser();
-    setIsDropdownOpen(false); // Close dropdown when navigating to a new page
+    setIsDropdownOpen(false); 
   }, [pathname]);
 
-  // Listen for clicks outside the dropdown to close it
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -82,17 +80,14 @@ export default function Navbar() {
                   </Link>
                 )}
                 
-                {/* ---------- USER PROFILE DROPDOWN ---------- */}
+                {/* ---------- SLEEK USER AVATAR DROPDOWN ---------- */}
                 <div className="relative" ref={dropdownRef}>
                   <button 
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex items-center gap-2 text-sm font-medium text-slate-300 hover:text-white transition-colors focus:outline-none"
+                    title={`Hi, ${user.name}`}
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-800 border border-slate-700 text-amber-400 font-bold text-lg shadow-inner hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(251,191,36,0.2)] transition-all focus:outline-none"
                   >
-                    <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-amber-400 font-bold shadow-inner">
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
-                    <span>Hi, {user.name}</span>
-                    <span className="text-xs text-slate-500 ml-1">▼</span>
+                    {user.name.charAt(0).toUpperCase()}
                   </button>
 
                   {/* Dropdown Menu Box */}
