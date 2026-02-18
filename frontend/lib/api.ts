@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://aurareads-backend.onrender.com/api/',
+  baseURL: 'https://aurareads-backend.onrender.com/api',
 });
 
 api.interceptors.request.use((config) => {
