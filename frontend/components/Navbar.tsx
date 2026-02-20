@@ -57,26 +57,32 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 bg-slate-950/60 backdrop-blur-xl border-b border-white/5 shadow-2xl">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-lg">
-              <span className="text-slate-950 font-black text-xl">A</span>
+        {/* Adjusted height for mobile (h-16) vs desktop (h-20) */}
+        <div className="flex justify-between items-center h-16 sm:h-20">
+          
+          {/* LOGO SECTION - Added shrink-0 to prevent squishing */}
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shadow-lg">
+              <span className="text-slate-950 font-black text-lg sm:text-xl">A</span>
             </div>
-            <span className="text-2xl font-extrabold tracking-tight text-white">
+            <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
               Aura<span className="text-amber-400">Reads</span>
             </span>
           </Link>
 
-          <div className="flex items-center gap-6">
+          {/* LINKS SECTION - Adjusted gaps for mobile */}
+          <div className="flex items-center gap-4 sm:gap-6">
             <Link href="/library" className="text-sm font-bold text-slate-300 hover:text-white transition-colors">
               Library
             </Link>
             
             {user ? (
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4 sm:gap-6">
                 {user.role === 'Admin' && (
                   <Link href="/admin" className="text-sm font-bold text-amber-500 hover:text-amber-400 transition-colors">
-                    Admin Console
+                    {/* Shows "Admin" on phones, "Admin Console" on laptops */}
+                    <span className="hidden sm:inline">Admin Console</span>
+                    <span className="sm:hidden">Admin</span>
                   </Link>
                 )}
                 
@@ -85,14 +91,15 @@ export default function Navbar() {
                   <button 
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     title={`Hi, ${user.name}`}
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-slate-800 border border-slate-700 text-amber-400 font-bold text-lg shadow-inner hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(251,191,36,0.2)] transition-all focus:outline-none"
+                    {/* Adjusted avatar size for mobile (w-8 h-8) vs desktop (w-10 h-10) */}
+                    className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-800 border border-slate-700 text-amber-400 font-bold text-base sm:text-lg shadow-inner hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(251,191,36,0.2)] transition-all focus:outline-none shrink-0"
                   >
                     {user.name.charAt(0).toUpperCase()}
                   </button>
 
                   {/* Dropdown Menu Box */}
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-3 w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="absolute right-0 mt-3 w-48 sm:w-56 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                       <div className="px-4 py-3 border-b border-slate-800 bg-slate-950/50">
                         <p className="text-sm font-bold text-white">{user.name}</p>
                         <p className="text-xs text-slate-400 truncate">{user.email || 'User Account'}</p>
@@ -114,11 +121,9 @@ export default function Navbar() {
                     </div>
                   )}
                 </div>
-                {/* ------------------------------------------- */}
-
               </div>
             ) : (
-              <Link href="/login" className="bg-amber-500 text-slate-950 px-5 py-2 rounded-lg font-bold hover:bg-amber-400 transition-all">
+              <Link href="/login" className="bg-amber-500 text-slate-950 px-4 py-1.5 sm:px-5 sm:py-2 rounded-lg text-sm sm:text-base font-bold hover:bg-amber-400 transition-all shrink-0">
                 Login
               </Link>
             )}
