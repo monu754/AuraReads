@@ -91,7 +91,6 @@ export default function Navbar() {
                   <button 
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     title={`Hi, ${user.name}`}
-                    {/* Adjusted avatar size for mobile (w-8 h-8) vs desktop (w-10 h-10) */}
                     className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-800 border border-slate-700 text-amber-400 font-bold text-base sm:text-lg shadow-inner hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(251,191,36,0.2)] transition-all focus:outline-none shrink-0"
                   >
                     {user.name.charAt(0).toUpperCase()}
