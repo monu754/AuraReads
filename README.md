@@ -1,104 +1,131 @@
-# 📚 AuraReads - Premium Book Review Platform
+# 📚 AuraReads
 
-AuraReads is a full-stack, premium book review platform built with a modern tech stack. It features a robust Role-Based Access Control (RBAC) system, allowing standard users to discover books and submit reviews, while granting Administrators a dedicated console to manage content and moderate community reviews.
+AuraReads is a modern, full-stack book library and community review platform. It features a sleek dark-themed UI, secure Role-Based Access Control (RBAC), and seamless OAuth integration, allowing users to browse books, submit reviews, and administrators to manage the platform.
+
+**🌐 Live Demo:** [https://aurareads.vercel.app](https://aurareads.vercel.app)
+---
 
 ## ✨ Key Features
 
-* **Role-Based Access Control (RBAC):** Distinct privileges for `Admin` and `User` accounts.
-* **Intelligent Trending Algorithm:** The home page dynamically displays the Top 5 books sorted by highest average community rating, using release date as a tie-breaker.
-* **Community Moderation System:** User reviews are placed in a "Pending" queue by default. They only become visible to the public once explicitly approved by an Admin.
-* **Full Library Management (CRUD):** Admins can add, edit, and safely delete books from the database.
-* **Secure Authentication:** Custom-built authentication using JSON Web Tokens (JWT) and Bcrypt password hashing.
-* **Premium UI/UX:** A highly responsive, dark-themed interface built with Next.js App Router and Tailwind CSS, featuring interactive dropdowns, animated badges, and dynamic UI states.
+### 🛡️ Secure Authentication & RBAC
+* **Multi-Provider Login:** Users can register manually via JWT or log in instantly using **Google** or **GitHub** OAuth (powered by Passport.js).
+* **Role-Based Access Control (RBAC):** Strict separation between standard `User` and `Admin` roles.
+* **Middleware Protection:** Custom backend bouncers verify JWTs and restrict sensitive API routes exclusively to Admin users.
+
+### 👑 Admin Console & Moderation
+* **User Management Dashboard:** Admins can view all registered users and promote/revoke Admin privileges with a single click.
+* **Content Moderation:** Dedicated queue to review, approve, or reject user-submitted book reviews.
+* **Book Management:** Full CRUD (Create, Read, Update, Delete) capabilities to maintain the library's catalog.
+
+### 📖 Dynamic Library & UX
+* **Real-Time Search:** Lightning-fast frontend filtering allows users to search the library by book title or author instantly.
+* **Dynamic Book Covers:** Supports both uploaded cover images and fallback dynamic CSS gradients based on user-selected colors.
+* **Fully Responsive:** Sleek, modern, Tailwind CSS-powered interface optimized for both desktop and mobile devices.
+
+---
 
 ## 🛠️ Tech Stack
 
 **Frontend:**
-
-* Next.js (React Framework - App Router)
-* Tailwind CSS (Styling)
-* Axios (API Requests)
-* TypeScript
+* [Next.js](https://nextjs.org/) (React Framework)
+* [Tailwind CSS](https://tailwindcss.com/) (Styling)
+* Axios (API Client)
 
 **Backend:**
-
-* Node.js & Express.js (REST API)
-* MongoDB & Mongoose (NoSQL Database & Object Modeling)
-* JSON Web Token (JWT) (Session Management)
-* Bcrypt.js (Security/Encryption)
+* [Node.js](https://nodejs.org/) & [Express.js](https://expressjs.com/)
+* [MongoDB](https://www.mongodb.com/) & Mongoose (Database & ODM)
+* JWT (JSON Web Tokens) & [bcryptjs](https://www.npmjs.com/package/bcryptjs) (Manual Auth)
+* [Passport.js](https://www.passportjs.org/) (Google & GitHub OAuth 2.0)
 
 ---
 
-## 🚀 Local Setup & Installation
+## 🚀 Getting Started (Local Development)
 
-Follow these steps to run the project locally on your machine.
+To run this project locally, you will need Node.js and a MongoDB Atlas cluster.
 
-### Prerequisites
+### 1. Clone the repository
+```bash
+git clone [https://github.com/your-username/AuraReads.git](https://github.com/your-username/AuraReads.git)
+cd AuraReads
+```
 
-* [Node.js](https://nodejs.org/) installed on your machine.
-* A [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) account and database connection string.
+### 2. Backend Setup
 
-### 1. Backend Setup
-
-Open a terminal and navigate to the `backend` directory:
+Navigate to the backend directory, install dependencies, and set up your environment variables.
 
 ```bash
 cd backend
-```
-Install the dependencies:
-
-```bash
 npm install
 ```
-Create a .env file in the root of the backend folder and add your environment variables:
+
+Create a .env file in the backend root:
 
 ```bash
 PORT=5000
-MONGO_URI=your_mongodb_connection_string_here
-JWT_SECRET=your_secret_key_here
+MONGO_URI=your_mongodb_atlas_connection_string
+JWT_SECRET=your_super_secret_jwt_key
+
+# OAuth Credentials
+GOOGLE_CLIENT_ID=your_google_id
+GOOGLE_CLIENT_SECRET=your_google_secret
+GITHUB_CLIENT_ID=your_github_id
+GITHUB_CLIENT_SECRET=your_github_secret 
 ```
 
-Start the backend development server:
+Start the backend server:
 
 ```bash
 npm run dev
 ```
 
-### 2. Frontend Setup
+### 3. Frontend Setup
 
-Open a second terminal and navigate to the frontend directory:
+Open a new terminal, navigate to the frontend directory, and install dependencies.
 
 ```bash
 cd frontend
-```
-
-Install the dependencies:
-
-```bash
 npm install
 ```
+Create a .env.local file in the frontend root:
 
-Start the frontend development server:
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+Start the frontend server:
 
 ```bash
 npm run dev
-```
+````
+The application will now be running at http://localhost:3000
 
-## 📂 Folder Structure Overview
+## 🔒 Becoming an Admin Locally
+
+For security, public registration automatically defaults all new accounts to the User role. To access the Admin Console locally:
+
+- Create an account via the frontend.
+- Open your MongoDB Atlas Dashboard.
+- Navigate to your users collection.
+- Edit your user document and change the role field from "User" to "Admin".
+- Log out and log back in on the frontend. You now have full Admin access!
+
+## 📂 Core Project Structure
 
 ```text
 AuraReads/
+├── backend/
+│   ├── config/         # Passport OAuth strategies & DB connection
+│   ├── controllers/    # API Logic (Auth, Books, Reviews)
+│   ├── middleware/     # JWT Verification & Role-Checking (isAdmin)
+│   ├── models/         # MongoDB Schemas
+│   ├── routes/         # Express API Routes
+│   └── server.js       # Express App Entry Point
 │
-├── backend/                  # Express.js API
-│   ├── controllers/          # Business logic (Auth, Books, Reviews)
-│   ├── middleware/           # RBAC & JWT Security validation
-│   ├── models/               # MongoDB Mongoose Schemas
-│   ├── routes/               # API Endpoints
-│   └── server.js             # Entry point & Database connection
-│
-└── frontend/                 # Next.js Application
-    ├── app/                  # Pages & Routing (Home, Login, Admin, Library)
-    ├── components/           # Reusable UI (Navbar, ReviewForm)
-    ├── lib/                  # Axios configuration & Token interceptors
-    └── tailwind.config.ts    # Styling configuration
-```
+└── frontend/
+    ├── app/
+    │   ├── admin/      # Protected Admin Dashboard & User Management
+    │   ├── book/       # Individual Book Pages
+    │   ├── library/    # Public Library Grid
+    │   ├── login/      # Unified Login/Register & OAuth redirect handler
+    │   └── page.tsx    # Landing Page
+    ├── components/     # Reusable UI (Navbar, etc.)
+    └── lib/            # Axios API Configuration
