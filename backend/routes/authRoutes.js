@@ -1,15 +1,17 @@
 import express from 'express';
-import { register, login, getAllUsers, updateUserRole } from '../controllers/authController.js';
 import { verifyToken, isAdmin } from '../middleware/authMiddleware.js';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-
+import { register, login, getAllUsers, updateUserRole, updateProfile, updatePassword, deleteAccount } from '../controllers/authController.js';
 const router = express.Router();
 
 // Existing Manual Routes
 router.post('/register', register);
 router.post('/login', login);
-
+// --- NEW PROFILE ROUTES ---
+router.put('/profile', verifyToken, updateProfile);
+router.put('/password', verifyToken, updatePassword);
+router.delete('/profile', verifyToken, deleteAccount);
 // --- NEW ADMIN ROUTES ---
 router.get('/users', verifyToken, isAdmin, getAllUsers);
 router.put('/users/:id/role', verifyToken, isAdmin, updateUserRole);

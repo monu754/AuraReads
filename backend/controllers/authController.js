@@ -96,3 +96,70 @@ export const updateUserRole = async (req, res) => {
     res.status(500).json({ message: 'Failed to update user role.', error: error.message });
   }
 };
+
+// --- NEW PROFILE MANAGEMENT FEATURES ---
+
+// 5. Update Profile Info
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    // req.user.id comes from the verifyToken middleware
+    const user = await User.findById(req.user.id); 
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+    await user.save();
+
+    res.status(200).json({ message: 'Profile updated successfully!', user: { name: user.name, email: user.email } });
+  } catch (error) {
+    // Catch duplicate email errors from MongoDB
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'This email is already in use.' });
+    }
+    res.status(500).json({ message: 'Failed to update profile.', error: error.message });
+  }
+};
+
+// 6. Change Password
+export const updatePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Securely check if the old password they typed is correct
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Incorrect current password.' });
+    }
+
+    // Hash the new password and save
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+    await user.save();
+
+    res.status(200).json({ message: 'Password updated successfully!' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update password.', error: error.message });
+  }
+};
+
+// 7. Delete Account
+export const deleteAccount = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+    res.status(200).json({ message: 'Account deleted successfully.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to delete account.', error: error.message });
+  }
+};

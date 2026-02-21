@@ -37,14 +37,13 @@ export default function Navbar() {
   }, [pathname]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    checkUser();
+    setIsDropdownOpen(false); 
+
+    // NEW: Listen for the profile update event so the name changes instantly!
+    window.addEventListener("storage", checkUser);
+    return () => window.removeEventListener("storage", checkUser);
+  }, [pathname]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
