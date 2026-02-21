@@ -12,6 +12,12 @@ AuraReads is a modern, full-stack book library and community review platform. It
 * **Role-Based Access Control (RBAC):** Strict separation between standard `User` and `Admin` roles.
 * **Middleware Protection:** Custom backend bouncers verify JWTs and restrict sensitive API routes exclusively to Admin users.
 
+### 👤 User Profile Management
+* **Personalized Dashboard:** Users can update their display name and email address through a dedicated, sleek profile settings page. Changes are processed securely on the backend and reflected instantly across the platform.
+* **Secure Password Updates:** Features a robust security check that mandates verifying the current password before a new one can be established. The system includes front-end validation to ensure new passwords match before submission.
+* **Account Deletion:** Users maintain full sovereignty over their data with a permanent account deletion feature accessible directly from their profile. This action securely wipes sensitive user credentials from the database.
+* **Smart Fallbacks:** When an account is deleted, community reviews are preserved but automatically attributed to a "[Deleted User]" to maintain platform integrity.
+
 ### 👑 Admin Console & Moderation
 * **User Management Dashboard:** Admins can view all registered users and promote/revoke Admin privileges with a single click.
 * **Content Moderation:** Dedicated queue to review, approve, or reject user-submitted book reviews.
