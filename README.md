@@ -2,7 +2,7 @@
 
 AuraReads is a modern, full-stack book library and community review platform. It features a sleek dark-themed UI, secure Role-Based Access Control (RBAC), and seamless OAuth integration, allowing users to browse books, submit reviews, and administrators to manage the platform.
 
-##### **🌐 Live Demo:** [https://aurareads.vercel.app](https://aurareads.vercel.app)
+#### **🌐 Live Demo:** [https://aurareads.vercel.app](https://aurareads.vercel.app)
 ---
 
 ## ✨ Key Features
