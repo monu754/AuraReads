@@ -2,7 +2,6 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-// Notice the 4 sets of dots here to reach the lib folder from inside [id]!
 import api from "../../../../lib/api";
 
 export default function EditBookPage({ params }: { params: Promise<{ id: string }> }) {
@@ -15,11 +14,23 @@ export default function EditBookPage({ params }: { params: Promise<{ id: string 
     author: "", 
     description: "", 
     genre: "", 
-    coverImage: "", // The image field is here!
+    coverImage: "", 
     coverColor: "" 
   });
 
   useEffect(() => {
+    // 🛑 FRONTEND BOUNCER: Kick out non-admins
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      router.push("/login");
+      return;
+    }
+    const currentUser = JSON.parse(userStr);
+    if (currentUser.role !== "Admin") {
+      router.push("/");
+      return;
+    }
+
     const fetchBook = async () => {
       try {
         const res = await api.get(`/books/${id}`);
@@ -44,20 +55,20 @@ export default function EditBookPage({ params }: { params: Promise<{ id: string 
     }
   };
 
-  if (loading) return <div className="text-center py-20 text-white font-bold animate-pulse">Loading Book Data...</div>;
+  if (loading) return <div className="text-center py-20 text-white font-bold animate-pulse tracking-widest text-xl">LOADING BOOK DATA...</div>;
 
   return (
-    <main className="max-w-2xl mx-auto py-16 px-4">
-      <h1 className="text-4xl font-black text-white mb-8 tracking-tight text-center">Edit Book Details</h1>
+    <main className="max-w-3xl mx-auto py-10 sm:py-16 px-4">
+      <h1 className="text-3xl sm:text-4xl font-black text-white mb-8 tracking-tight text-center">Edit Masterpiece</h1>
       
-      <form onSubmit={handleSubmit} className="space-y-6 bg-slate-900/40 backdrop-blur-md p-10 rounded-3xl border border-white/5 shadow-2xl">
+      <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6 bg-slate-900/40 backdrop-blur-md p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-white/5 shadow-2xl">
         <div>
           <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">Book Title</label>
           <input 
             required 
             value={formData.title || ""} 
             onChange={(e) => setFormData({...formData, title: e.target.value})} 
-            className="w-full p-4 rounded-xl bg-slate-950/50 text-white border border-white/10 outline-none focus:border-amber-500 transition-colors" 
+            className="w-full p-3.5 sm:p-4 rounded-xl bg-slate-950/50 text-white border border-white/10 outline-none focus:border-amber-500 transition-colors" 
           />
         </div>
         
@@ -67,20 +78,19 @@ export default function EditBookPage({ params }: { params: Promise<{ id: string 
             required 
             value={formData.author || ""} 
             onChange={(e) => setFormData({...formData, author: e.target.value})} 
-            className="w-full p-4 rounded-xl bg-slate-950/50 text-white border border-white/10 outline-none focus:border-amber-500 transition-colors" 
+            className="w-full p-3.5 sm:p-4 rounded-xl bg-slate-950/50 text-white border border-white/10 outline-none focus:border-amber-500 transition-colors" 
           />
         </div>
 
-        {/* --- HERE IS THE COVER IMAGE URL FIELD --- */}
         <div>
           <label className="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-widest">Cover Image URL</label>
           <input 
             placeholder="Paste new image link here (https://...)"
             value={formData.coverImage || ""} 
             onChange={(e) => setFormData({...formData, coverImage: e.target.value})} 
-            className="w-full p-4 rounded-xl bg-slate-950/50 text-white border border-white/10 outline-none focus:border-amber-500 transition-colors" 
+            className="w-full p-3.5 sm:p-4 rounded-xl bg-slate-950/50 text-white border border-white/10 outline-none focus:border-amber-500 transition-colors" 
           />
-          <p className="text-[10px] text-slate-500 mt-2 italic">Tip: Right-click a book cover online and select "Copy Image Address".</p>
+          <p className="text-[10px] sm:text-xs text-slate-500 mt-2 italic">Tip: Right-click a book cover online and select "Copy Image Address".</p>
         </div>
 
         <div>
@@ -90,15 +100,15 @@ export default function EditBookPage({ params }: { params: Promise<{ id: string 
             rows={5} 
             value={formData.description || ""} 
             onChange={(e) => setFormData({...formData, description: e.target.value})} 
-            className="w-full p-4 rounded-xl bg-slate-950/50 text-white border border-white/10 outline-none resize-none focus:border-amber-500 transition-colors" 
+            className="w-full p-3.5 sm:p-4 rounded-xl bg-slate-950/50 text-white border border-white/10 outline-none resize-none focus:border-amber-500 transition-colors" 
           />
         </div>
         
-        <div className="flex gap-4 pt-4">
-          <button type="button" onClick={() => router.push('/admin')} className="flex-1 border border-white/10 text-white font-bold py-4 rounded-xl hover:bg-white/5 transition-colors">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4">
+          <button type="button" onClick={() => router.push('/admin')} className="order-2 sm:order-1 flex-1 border border-white/10 text-white font-bold py-3.5 sm:py-4 rounded-xl hover:bg-white/5 transition-colors text-sm sm:text-base">
             Cancel
           </button>
-          <button type="submit" className="flex-1 bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-black py-4 rounded-xl shadow-lg hover:shadow-amber-500/20 transition-all uppercase tracking-widest">
+          <button type="submit" className="order-1 sm:order-2 flex-1 bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-black py-3.5 sm:py-4 rounded-xl shadow-lg hover:shadow-amber-500/20 transition-all uppercase tracking-widest text-sm sm:text-base">
             Save Changes
           </button>
         </div>

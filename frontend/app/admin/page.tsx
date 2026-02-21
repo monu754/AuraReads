@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import api from "../../lib/api";
 
 interface Review {
@@ -20,32 +21,46 @@ interface Book {
 }
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [bookSearchQuery, setBookSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<'reviews' | 'books'>('reviews');
   const [reviews, setReviews] = useState<Review[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      if (activeTab === 'reviews') {
-        const res = await api.get("/reviews/pending");
-        setReviews(res.data);
-      } else {
-        const res = await api.get("/books");
-        setBooks(res.data);
-      }
-    } catch (err) {
-      console.error("Failed to fetch data", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    // 🛑 FRONTEND BOUNCER: Kick out anyone who isn't an Admin
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      router.push("/login");
+      return;
+    }
+    const currentUser = JSON.parse(userStr);
+    if (currentUser.role !== "Admin") {
+      router.push("/"); // Send normal users back to the home page
+      return;
+    }
+
+    // If they are an Admin, fetch the data
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        if (activeTab === 'reviews') {
+          const res = await api.get("/reviews/pending");
+          setReviews(res.data);
+        } else {
+          const res = await api.get("/books");
+          setBooks(res.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchData();
-  }, [activeTab]);
+  }, [activeTab, router]);
 
   const handleStatusUpdate = async (id: string, newStatus: string) => {
     try {
@@ -80,7 +95,6 @@ export default function AdminDashboard() {
           <p className="text-slate-400 mt-2 text-lg">Manage platform content and moderation.</p>
         </div>
         
-        {/* ACTION BUTTONS (Responsive gap & wrapping) */}
         <div className="flex flex-wrap w-full md:w-auto gap-3">
           <Link href="/admin/users" className="flex-1 md:flex-none text-center bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 font-bold px-6 py-3 rounded-xl transition-all shadow-lg">
             Manage Users
@@ -91,7 +105,6 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* TABS NAVIGATION (Added flex-wrap so they don't overflow on small phones) */}
       <div className="flex flex-wrap gap-2 sm:gap-4 mb-8 border-b border-white/10 pb-4">
         <button 
           onClick={() => setActiveTab('reviews')} 
@@ -110,8 +123,6 @@ export default function AdminDashboard() {
       {loading ? (
         <div className="text-center py-20 text-slate-400 animate-pulse">Loading data...</div>
       ) : activeTab === 'reviews' ? (
-        
-        /* ---------------- REVIEWS TABLE ---------------- */
         <div className="bg-slate-900/60 rounded-2xl border border-white/5 shadow-2xl overflow-x-auto">
           {reviews.length === 0 ? (
             <p className="p-10 text-center text-emerald-400 font-bold whitespace-nowrap">Queue is empty! All caught up.</p>
@@ -146,8 +157,6 @@ export default function AdminDashboard() {
           )}
         </div>
       ) : (
-        
-        /* ---------------- BOOKS TABLE ---------------- */
         <div className="space-y-6">
           <div className="relative w-full max-w-md">
             <input 
@@ -157,9 +166,6 @@ export default function AdminDashboard() {
               onChange={(e) => setBookSearchQuery(e.target.value)}
               className="w-full bg-slate-900/60 border border-slate-700 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-slate-500 shadow-lg"
             />
-            <svg className="absolute right-4 top-3.5 h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
           </div>
 
           <div className="bg-slate-900/60 rounded-2xl border border-white/5 shadow-2xl overflow-x-auto">

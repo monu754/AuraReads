@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import api from "../../../lib/api";
 
 export default function AddBookPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     title: "",
     author: "",
@@ -12,7 +13,19 @@ export default function AddBookPage() {
     coverImage: "", 
     coverColor: "from-slate-700 to-slate-800"
   });
-  const router = useRouter();
+
+  useEffect(() => {
+    // 🛑 FRONTEND BOUNCER
+    const userStr = localStorage.getItem("user");
+    if (!userStr) {
+      router.push("/login");
+      return;
+    }
+    const currentUser = JSON.parse(userStr);
+    if (currentUser.role !== "Admin") {
+      router.push("/");
+    }
+  }, [router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
