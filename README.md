@@ -30,16 +30,16 @@ AuraReads is a modern, full-stack book library and community review platform. It
 
 ### 📊 Permissions Matrix
 
-| Permission | Admin | User | Guest |
+| Permission | Admin | User | 
 | :--- | :---: | :---: | :---: |
-| **Browse Books & Read Reviews** | ✅ | ✅ | ✅ |
-| **Create an Account / Login** | ✅ | ✅ | ✅ |
-| **Submit Book Reviews** | ✅ | ✅ | ❌ |
-| **Edit Profile & Password** | ✅ | ✅ | ❌ |
-| **Delete Own Account** | ✅ | ✅ | ❌ |
-| **Add / Edit / Delete Books** | ✅ | ❌ | ❌ |
-| **Approve / Reject Reviews** | ✅ | ❌ | ❌ |
-| **Promote / Demote Users** | ✅ | ❌ | ❌ |
+| **Browse Books & Read Reviews** | ✅ | ✅ | 
+| **Create an Account / Login** | ✅ | ✅ | 
+| **Submit Book Reviews** | ✅ | ✅ | 
+| **Edit Profile & Password** | ✅ | ✅ | 
+| **Delete Own Account** | ✅ | ✅ | 
+| **Add / Edit / Delete Books** | ✅ | ❌ | 
+| **Approve / Reject Reviews** | ✅ | ❌ | 
+| **Promote / Demote Users** | ✅ | ❌ | 
 ---
 
 ## 🛠️ Tech Stack
