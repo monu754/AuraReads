@@ -17,7 +17,7 @@ interface Book {
 
 interface Review {
   _id: string;
-  user: { name: string };
+  user?: { name: string };
   rating: number;
   comment: string;
   createdAt: string;
@@ -132,28 +132,43 @@ export default function BookDetailsPage({ params }: { params: Promise<{ id: stri
               {reviews.length === 0 ? (
                 <p className="text-slate-500 text-base sm:text-lg italic">No approved reviews yet. Be the first to share your thoughts!</p>
               ) : (
-                reviews.map((review) => (
-                  <div key={review._id} className="bg-slate-900/40 backdrop-blur-md p-5 sm:p-8 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
-                    <div className="flex flex-row justify-between items-start mb-4 sm:mb-6 gap-2">
-                      <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-full bg-gradient-to-br from-slate-700 to-slate-800 border border-slate-600 flex items-center justify-center text-white font-black text-base sm:text-lg shadow-inner">
-                          {review.user?.name.charAt(0).toUpperCase()}
+                reviews.map((review) => {
+                  // Check if the user still exists in the database
+                  const isDeletedUser = !review.user;
+                  const displayName = isDeletedUser ? "[Deleted User]" : review.user?.name;
+                  const avatarChar = isDeletedUser ? "?" : displayName?.charAt(0).toUpperCase();
+
+                  return (
+                    <div key={review._id} className="bg-slate-900/40 backdrop-blur-md p-5 sm:p-8 rounded-2xl border border-white/5 hover:border-white/10 transition-colors">
+                      <div className="flex flex-row justify-between items-start mb-4 sm:mb-6 gap-2">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                          
+                          {/* Avatar Box: Grays out if user is deleted */}
+                          <div className={`w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-full flex items-center justify-center font-black text-base sm:text-lg shadow-inner border ${isDeletedUser ? 'bg-slate-800/50 border-slate-700 text-slate-500' : 'bg-gradient-to-br from-slate-700 to-slate-800 border-slate-600 text-white'}`}>
+                            {avatarChar}
+                          </div>
+                          
+                          <div>
+                            {/* Name Text: Italicizes and grays out if user is deleted */}
+                            <p className={`font-bold text-base sm:text-lg leading-none mb-1 sm:mb-1.5 ${isDeletedUser ? 'text-slate-500 italic' : 'text-white'}`}>
+                              {displayName}
+                            </p>
+                            <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                              {new Date(review.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="font-bold text-white text-base sm:text-lg leading-none mb-1 sm:mb-1.5">{review.user?.name}</p>
-                          <p className="text-xs sm:text-sm text-slate-500 font-medium">{new Date(review.createdAt).toLocaleDateString()}</p>
+                        
+                        {/* Rating Badge */}
+                        <div className="flex items-center shrink-0 bg-amber-500/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-amber-500/20 shadow-[0_0_15px_rgba(251,191,36,0.1)]">
+                          <span className="text-amber-400 text-xs sm:text-sm mr-1 sm:mr-1.5 drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]">★</span>
+                          <span className="font-black text-amber-400 text-sm sm:text-base">{review.rating}.0</span>
                         </div>
                       </div>
-                      
-                      {/* Rating Badge - Shrink-0 prevents it from getting crushed on small screens */}
-                      <div className="flex items-center shrink-0 bg-amber-500/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-amber-500/20 shadow-[0_0_15px_rgba(251,191,36,0.1)]">
-                        <span className="text-amber-400 text-xs sm:text-sm mr-1 sm:mr-1.5 drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]">★</span>
-                        <span className="font-black text-amber-400 text-sm sm:text-base">{review.rating}.0</span>
-                      </div>
+                      <p className="text-slate-300 leading-relaxed text-base sm:text-lg font-light">{review.comment}</p>
                     </div>
-                    <p className="text-slate-300 leading-relaxed text-base sm:text-lg font-light">{review.comment}</p>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>

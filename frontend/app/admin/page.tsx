@@ -140,7 +140,10 @@ export default function AdminDashboard() {
                   <tr key={r._id} className="hover:bg-slate-800/30 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <p className="font-bold text-white mb-1">{r.book?.title}</p>
-                      <p className="text-sm text-slate-500">by {r.user?.name}</p>
+                      {/* Name Text: Italicizes and grays out if user is deleted */}
+                      <p className={`text-sm ${!r.user ? 'text-rose-400/70 italic font-medium' : 'text-slate-500'}`}>
+                        by {r.user?.name || "[Deleted Account]"}
+                      </p>
                     </td>
                     <td className="px-6 py-4 text-slate-300 text-sm min-w-[200px]">
                       <span className="text-amber-400 mr-1">★ {r.rating}</span> 
