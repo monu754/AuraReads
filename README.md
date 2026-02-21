@@ -45,7 +45,7 @@ To run this project locally, you will need Node.js and a MongoDB Atlas cluster.
 
 ### 1. Clone the repository
 ```bash
-git clone [https://github.com/monu754/AuraReads.git](https://github.com/monu754/AuraReads.git)
+git clone https://github.com/monu754/AuraReads.git
 cd AuraReads
 ```
 
