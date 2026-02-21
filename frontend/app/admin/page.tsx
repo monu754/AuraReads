@@ -20,6 +20,7 @@ interface Book {
 }
 
 export default function AdminDashboard() {
+  const [bookSearchQuery, setBookSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState<'reviews' | 'books'>('reviews');
   const [reviews, setReviews] = useState<Review[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
@@ -68,6 +69,12 @@ export default function AdminDashboard() {
     }
   };
 
+  // Filter books based on search query
+  const filteredBooks = books.filter(book => 
+    book.title.toLowerCase().includes(bookSearchQuery.toLowerCase()) || 
+    book.author.toLowerCase().includes(bookSearchQuery.toLowerCase())
+  );
+
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6">
@@ -76,7 +83,6 @@ export default function AdminDashboard() {
           <p className="text-slate-400 mt-2 text-lg">Manage platform content and moderation.</p>
         </div>
         
-        {/* --- NEW BUTTON CONTAINER --- */}
         <div className="flex flex-wrap gap-4">
           <Link href="/admin/users" className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 font-bold px-6 py-3 rounded-xl transition-all shadow-lg">
             Manage Users
@@ -144,28 +150,52 @@ export default function AdminDashboard() {
       ) : (
         
         /* ---------------- BOOKS TABLE ---------------- */
-        <div className="bg-slate-900/60 rounded-2xl overflow-hidden border border-white/5 shadow-2xl">
-          <table className="min-w-full divide-y divide-slate-800">
-            <thead className="bg-slate-950/50">
-              <tr>
-                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase">Book Title</th>
-                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase">Author</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-slate-400 uppercase">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/50">
-              {books.map((b) => (
-                <tr key={b._id} className="hover:bg-slate-800/30 transition-colors">
-                  <td className="px-6 py-4 font-bold text-white">{b.title}</td>
-                  <td className="px-6 py-4 text-slate-400">{b.author}</td>
-                  <td className="px-6 py-4 text-right">
-                    <Link href={`/admin/edit-book/${b._id}`} className="text-indigo-400 font-bold mr-4 hover:underline">Edit</Link>
-                    <button onClick={() => handleDeleteBook(b._id)} className="text-rose-400 font-bold hover:underline">Delete</button>
-                  </td>
+        <div className="space-y-6">
+          {/* SEARCH BAR */}
+          <div className="relative max-w-md">
+            <input 
+              type="text" 
+              placeholder="Search books by title or author..." 
+              value={bookSearchQuery}
+              onChange={(e) => setBookSearchQuery(e.target.value)}
+              className="w-full bg-slate-900/60 border border-slate-700 text-white px-4 py-3 rounded-xl focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder-slate-500 shadow-lg"
+            />
+            <svg className="absolute right-4 top-3.5 h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+
+          <div className="bg-slate-900/60 rounded-2xl overflow-hidden border border-white/5 shadow-2xl">
+            <table className="min-w-full divide-y divide-slate-800">
+              <thead className="bg-slate-950/50">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase">Book Title</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase">Author</th>
+                  <th className="px-6 py-4 text-right text-xs font-bold text-slate-400 uppercase">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-800/50">
+                {filteredBooks.length === 0 ? (
+                  <tr>
+                    <td colSpan={3} className="p-8 text-center text-slate-400">
+                      No books found matching "{bookSearchQuery}"
+                    </td>
+                  </tr>
+                ) : (
+                  filteredBooks.map((b) => (
+                    <tr key={b._id} className="hover:bg-slate-800/30 transition-colors">
+                      <td className="px-6 py-4 font-bold text-white">{b.title}</td>
+                      <td className="px-6 py-4 text-slate-400">{b.author}</td>
+                      <td className="px-6 py-4 text-right">
+                        <Link href={`/admin/edit-book/${b._id}`} className="text-indigo-400 font-bold mr-4 hover:underline">Edit</Link>
+                        <button onClick={() => handleDeleteBook(b._id)} className="text-rose-400 font-bold hover:underline">Delete</button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </main>
