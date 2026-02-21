@@ -28,6 +28,18 @@ AuraReads is a modern, full-stack book library and community review platform. It
 * **Dynamic Book Covers:** Supports both uploaded cover images and fallback dynamic CSS gradients based on user-selected colors.
 * **Fully Responsive:** Sleek, modern, Tailwind CSS-powered interface optimized for both desktop and mobile devices.
 
+### 📊 Permissions Matrix
+
+| Permission | Admin | User | Guest |
+| :--- | :---: | :---: | :---: |
+| **Browse Books & Read Reviews** | ✅ | ✅ | ✅ |
+| **Create an Account / Login** | ✅ | ✅ | ✅ |
+| **Submit Book Reviews** | ✅ | ✅ | ❌ |
+| **Edit Profile & Password** | ✅ | ✅ | ❌ |
+| **Delete Own Account** | ✅ | ✅ | ❌ |
+| **Add / Edit / Delete Books** | ✅ | ❌ | ❌ |
+| **Approve / Reject Reviews** | ✅ | ❌ | ❌ |
+| **Promote / Demote Users** | ✅ | ❌ | ❌ |
 ---
 
 ## 🛠️ Tech Stack
