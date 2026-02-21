@@ -75,9 +75,16 @@ export default function AdminDashboard() {
           <h1 className="text-4xl font-black text-white tracking-tight">Admin Console</h1>
           <p className="text-slate-400 mt-2 text-lg">Manage platform content and moderation.</p>
         </div>
-        <Link href="/admin/add-book" className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-amber-500/10">
-          + Add New Book
-        </Link>
+        
+        {/* --- NEW BUTTON CONTAINER --- */}
+        <div className="flex flex-wrap gap-4">
+          <Link href="/admin/users" className="bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 font-bold px-6 py-3 rounded-xl transition-all shadow-lg">
+            Manage Users
+          </Link>
+          <Link href="/admin/add-book" className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-6 py-3 rounded-xl transition-all shadow-lg shadow-amber-500/10">
+            + Add New Book
+          </Link>
+        </div>
       </div>
 
       {/* Tabs Navigation */}

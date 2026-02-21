@@ -7,11 +7,12 @@ import api from "../../lib/api";
 export default function LoginPage() {
   const router = useRouter();
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({ name: "", email: "", password: "", role: "User" });
+  // Removed 'role' from state initialization
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // --- NEW: Check if we just got redirected from Google/GitHub ---
+    // Check if we just got redirected from Google/GitHub
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     const userData = urlParams.get('user');
@@ -95,25 +96,14 @@ export default function LoginPage() {
             className="w-full border border-white/5 rounded-xl p-4 bg-slate-950/50 text-white focus:border-amber-500 outline-none"
           />
 
-          {!isLogin && (
-            <div className="flex items-center gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
-              <input 
-                type="checkbox" 
-                id="adminCheck"
-                onChange={(e) => setFormData({ ...formData, role: e.target.checked ? "Admin" : "User" })}
-              />
-              <label htmlFor="adminCheck" className="text-xs text-amber-400 font-bold cursor-pointer">
-                REQUEST ADMIN PRIVILEGES
-              </label>
-            </div>
-          )}
+          {/* Admin checkbox has been completely removed from here */}
 
           <button type="submit" className="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-slate-950 font-black py-4 rounded-xl shadow-lg hover:shadow-orange-500/20 transition-all">
             {isLogin ? "SIGN IN" : "GET STARTED"}
           </button>
         </form>
 
-        {/* --- THE NEW OAUTH BUTTONS --- */}
+        {/* OAuth Buttons */}
         <div className="mt-8">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

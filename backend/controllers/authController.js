@@ -5,28 +5,24 @@ import jwt from 'jsonwebtoken';
 // 1. Register a New User
 export const register = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
-    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists with this email.' });
     }
 
-    // Hash the password (scramble it securely)
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create the new user
     const newUser = new User({
       name,
       email,
       password: hashedPassword,
-      role: role || 'User' // Default to 'User' if no role is provided
+      role: 'User' // SECURE: Hardcoded default to 'User'
     });
 
     await newUser.save();
-
     res.status(201).json({ message: 'User registered successfully!' });
   } catch (error) {
     res.status(500).json({ message: 'Server error during registration.', error: error.message });
@@ -38,26 +34,22 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password.' });
     }
 
-    // Compare the provided password with the scrambled database password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid email or password.' });
     }
 
-    // Generate the JWT Badge (contains their ID and Role)
     const token = jwt.sign(
       { id: user._id, role: user.role }, 
       process.env.JWT_SECRET, 
-      { expiresIn: '1d' } // Token expires in 1 day
+      { expiresIn: '1d' } 
     );
 
-    // Send the token and user data back to the frontend
     res.status(200).json({
       message: 'Login successful!',
       token,
@@ -70,5 +62,37 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ message: 'Server error during login.', error: error.message });
+  }
+};
+
+// --- NEW ADMIN FEATURES ---
+
+// 3. Get All Users (Admin Only)
+export const getAllUsers = async (req, res) => {
+  try {
+    // Fetch all users but hide their passwords for security
+    const users = await User.find({}).select('-password');
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch users.', error: error.message });
+  }
+};
+
+// 4. Update User Role (Admin Only)
+export const updateUserRole = async (req, res) => {
+  try {
+    const { role } = req.body;
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    user.role = role;
+    await user.save();
+
+    res.status(200).json({ message: 'User role updated successfully!', user });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update user role.', error: error.message });
   }
 };
